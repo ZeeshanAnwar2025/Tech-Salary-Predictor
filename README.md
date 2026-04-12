@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 💼 Tech Salary Predictor
 
 A Machine Learning web app that predicts **exact salaries** for tech jobs based on role, experience, education, and more — built with Python, Scikit-learn, and Streamlit.
@@ -144,3 +145,7 @@ pip install streamlit scikit-learn numpy pandas matplotlib seaborn
 ## 📄 License
 
 This project is open source and available under the [MIT License](LICENSE).
+=======
+# Tech-Salary-Predictor
+Tech Salary Predictor is a machine learning project built in a Jupyter Notebook that predicts tech salaries using features like experience, role, and location. It covers data preprocessing, EDA, model training, and evaluation using Python and scikit-learn.
+>>>>>>> 46417ce11e37f64539a1855fce5f82d07a49f078
