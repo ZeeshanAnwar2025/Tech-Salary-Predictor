@@ -395,7 +395,7 @@ def page_login():
                background-clip:text;line-height:1.2;">Tech Salary<br>Predictor</div>
           <div style="color:rgba(255,255,255,0.28);font-size:0.78rem;
                font-family:'Space Mono',monospace;letter-spacing:0.12em;margin-top:0.6rem;">
-               AI-POWERED · FINAL YEAR PROJECT
+               AI-POWERED · MINOR PROJECT
           </div>
         </div>
         """, unsafe_allow_html=True)
@@ -543,7 +543,7 @@ def page_home():
         s3.markdown(f'<div class="stat-card"><div class="stat-val">${df_all["predicted_salary"].max():,.0f}</div><div class="stat-lbl">Highest Prediction</div></div>', unsafe_allow_html=True)
         s4.markdown(f'<div class="stat-card"><div class="stat-val">{df_all["job_title"].nunique()}</div><div class="stat-lbl">Unique Roles</div></div>', unsafe_allow_html=True)
 
-    st.markdown('<div class="footer">Random Forest Regressor · Tech Job Salary Dataset · Final Year Project 2025</div>', unsafe_allow_html=True)
+    st.markdown('<div class="footer">Random Forest Regressor · Tech Job Salary Dataset · Minor Project 2026</div>', unsafe_allow_html=True)
 
 
 # ═══════════════════════════════════════════════════════════════
