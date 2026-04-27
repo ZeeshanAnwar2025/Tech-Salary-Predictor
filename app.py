@@ -40,7 +40,24 @@ html, body, [class*="css"]  { font-family: 'DM Sans', sans-serif; }
 .stApp { background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%); min-height: 100vh; }
 
 /* ── Hide Streamlit chrome ───────────────────────────── */
-#MainMenu, footer, header { visibility: hidden; }
+#MainMenu, footer { visibility: hidden; }
+header { visibility: hidden; }
+
+/* ── Sidebar toggle — always visible ─────────────────── */
+[data-testid="collapsedControl"] {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    color: #00d4ff !important;
+    background: rgba(0,212,255,0.1) !important;
+    border: 1px solid rgba(0,212,255,0.3) !important;
+    border-radius: 8px !important;
+}
+[data-testid="collapsedControl"] svg {
+    fill: #00d4ff !important;
+    stroke: #00d4ff !important;
+}
 
 /* ── Sidebar ─────────────────────────────────────────── */
 [data-testid="stSidebar"] {
@@ -453,7 +470,6 @@ PAGES = [
     "🤖  About Model",
     "💬  Feedback",
 ]
-
 def render_sidebar():
     with st.sidebar:
         st.markdown('<div class="nav-logo">⚡ SALARY.AI</div>', unsafe_allow_html=True)
