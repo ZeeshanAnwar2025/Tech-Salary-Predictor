@@ -461,22 +461,19 @@ def render_sidebar():
             f'<div class="user-chip">👤 &nbsp;{st.session_state.username}</div>',
             unsafe_allow_html=True,
         )
-
         for pg in PAGES:
             active = st.session_state.page == pg
-            style = (
-                "background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.3);"
-                "color:#00d4ff;border-radius:10px;padding:0.6rem 1rem;margin-bottom:0.25rem;"
-                "cursor:pointer;font-size:0.9rem;display:block;width:100%;text-align:left;"
-            ) if active else (
-                "background:rgba(255,255,255,0.02);border:1px solid transparent;"
-                "color:rgba(255,255,255,0.5);border-radius:10px;padding:0.6rem 1rem;"
-                "margin-bottom:0.25rem;cursor:pointer;font-size:0.9rem;display:block;"
-                "width:100%;text-align:left;"
-            )
-            if st.sidebar.button(pg, key=f"nav_{pg}", use_container_width=True):
-                st.session_state.page = pg
-                st.rerun()
+            if active:
+                st.markdown(
+                    f'<div style="background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.3);'
+                    f'color:#00d4ff;border-radius:10px;padding:0.6rem 1rem;margin-bottom:0.25rem;'
+                    f'font-size:0.9rem;">{pg}</div>',
+                    unsafe_allow_html=True,
+                )
+            else:
+                if st.button(pg, key=f"nav_{pg}", use_container_width=True):
+                    st.session_state.page = pg
+                    st.rerun()
 
         st.markdown("---")
         if st.button("🚪  Logout", key="btn_logout", use_container_width=True):
