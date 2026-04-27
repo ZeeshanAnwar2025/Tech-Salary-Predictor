@@ -43,18 +43,34 @@ html, body, [class*="css"]  { font-family: 'DM Sans', sans-serif; }
 #MainMenu, footer { visibility: hidden; }
 header { visibility: hidden; }
 
-/* ── Sidebar toggle — always visible ─────────────────── */
+/* ── Sidebar open/close toggle — always visible ──────── */
 [data-testid="collapsedControl"] {
-    display: flex !important;
     visibility: visible !important;
+    display: flex !important;
     opacity: 1 !important;
-    pointer-events: auto !important;
-    color: #00d4ff !important;
-    background: rgba(0,212,255,0.1) !important;
-    border: 1px solid rgba(0,212,255,0.3) !important;
+    pointer-events: all !important;
+    z-index: 999999 !important;
+    position: fixed !important;
+    top: 0.5rem !important;
+    left: 0.5rem !important;
+    background: rgba(0,212,255,0.15) !important;
+    border: 1px solid rgba(0,212,255,0.4) !important;
     border-radius: 8px !important;
+    padding: 4px !important;
 }
 [data-testid="collapsedControl"] svg {
+    fill: #00d4ff !important;
+    stroke: #00d4ff !important;
+    color: #00d4ff !important;
+}
+/* Sidebar toggle when sidebar is OPEN (the ❮ button inside sidebar) */
+[data-testid="stSidebarCollapseButton"] {
+    visibility: visible !important;
+    display: flex !important;
+    opacity: 1 !important;
+    pointer-events: all !important;
+}
+[data-testid="stSidebarCollapseButton"] svg {
     fill: #00d4ff !important;
     stroke: #00d4ff !important;
 }
