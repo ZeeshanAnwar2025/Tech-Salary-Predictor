@@ -41,40 +41,40 @@ html, body, [class*="css"]  { font-family: 'DM Sans', sans-serif; }
 
 /* ── Hide Streamlit chrome ───────────────────────────── */
 #MainMenu, footer { visibility: hidden; }
-header { visibility: hidden; }
 
-/* ── Sidebar open/close toggle — always visible ──────── */
+/* We hide the header background, but NOT the visibility 
+   of the header container itself, so the button stays. */
+header { 
+    background-color: rgba(0,0,0,0) !important; 
+    border: none !important;
+}
+
+/* ── Sidebar toggle — fixed and always on top ────────── */
 [data-testid="collapsedControl"] {
-    visibility: visible !important;
     display: flex !important;
+    visibility: visible !important;
     opacity: 1 !important;
-    pointer-events: all !important;
-    z-index: 999999 !important;
+    pointer-events: auto !important;
+    
+    /* Position it specifically so it's always accessible */
     position: fixed !important;
-    top: 0.5rem !important;
-    left: 0.5rem !important;
+    top: 15px !important;
+    left: 15px !important;
+    z-index: 999999 !important;
+    
+    color: #00d4ff !important;
     background: rgba(0,212,255,0.15) !important;
     border: 1px solid rgba(0,212,255,0.4) !important;
-    border-radius: 8px !important;
-    padding: 4px !important;
+    border-radius: 10px !important;
+    padding: 5px !important;
 }
+
 [data-testid="collapsedControl"] svg {
     fill: #00d4ff !important;
     stroke: #00d4ff !important;
-    color: #00d4ff !important;
+    width: 28px !important;
+    height: 28px !important;
 }
-/* Sidebar toggle when sidebar is OPEN (the ❮ button inside sidebar) */
-[data-testid="stSidebarCollapseButton"] {
-    visibility: visible !important;
-    display: flex !important;
-    opacity: 1 !important;
-    pointer-events: all !important;
-}
-[data-testid="stSidebarCollapseButton"] svg {
-    fill: #00d4ff !important;
-    stroke: #00d4ff !important;
-}
-
 /* ── Sidebar ─────────────────────────────────────────── */
 [data-testid="stSidebar"] {
     background: linear-gradient(180deg, #0d0d1e 0%, #12122a 100%) !important;
@@ -514,7 +514,7 @@ def render_sidebar():
             st.rerun()
 
         st.markdown(
-            '<div class="footer">Random Forest Regressor<br>© 2025 Tech Salary Predictor</div>',
+            '<div class="footer">Random Forest Regressor<br>© 2026 Tech Salary Predictor</div>',
             unsafe_allow_html=True,
         )
 
@@ -609,6 +609,7 @@ def page_predict(bundle):
         years_exp = st.number_input("Years of Experience",    min_value=0.0, max_value=40.0, value=3.0, step=0.5)
 
     st.markdown("---")
+   
 
     if st.button("💰  PREDICT MY SALARY"):
         with st.spinner("Running prediction model…"):
@@ -819,29 +820,47 @@ def page_dashboard():
 # ═══════════════════════════════════════════════════════════════
 def page_report():
     st.markdown('<p class="page-title">Download Report</p>', unsafe_allow_html=True)
-    st.markdown('<p class="page-sub">Generate a professional salary prediction report</p>', unsafe_allow_html=True)
+    st.markdown('<p class="page-sub">Generate a professional report for any past prediction</p>', unsafe_allow_html=True)
 
-    pred = st.session_state.get("last_prediction")
-    if not pred:
-        rows = db_get_history(st.session_state.username)
-        if rows:
-            r = rows[0]
-            pred = {"username": r["username"], "job_title": r["job_title"],
-                    "education": r["education"], "gender": r["gender"],
-                    "age": r["age"], "experience": r["experience"],
-                    "salary": r["predicted_salary"], "date": r["created_at"]}
-
-    if not pred:
+    # 1. Fetch all history for the user
+    rows = db_get_history(st.session_state.username)
+    
+    if not rows:
         st.markdown(
-            '<div class="info-alert">📭 No prediction found. Make a prediction on the <b>Predict Salary</b> page first.</div>',
+            '<div class="info-alert">📭 No history found. Make a prediction first.</div>',
             unsafe_allow_html=True,
         )
         return
 
+    # 2. Create a selection list for the dropdown
+    # We format the string so it's easy to identify (Date - Job Title - Salary)
+    report_options = [
+        f"{r['created_at']} | {r['job_title']} (${r['predicted_salary']:,.0f})" 
+        for r in rows
+    ]
+    
+    selected_str = st.selectbox("Select a prediction to generate report:", report_options)
+    
+    # 3. Find the dictionary for the selected prediction
+    selected_index = report_options.index(selected_str)
+    r = rows[selected_index]
+    
+    # Map the database row to the prediction format needed for the report
+    pred = {
+        "username": r["username"], 
+        "job_title": r["job_title"],
+        "education": r["education"], 
+        "gender": r["gender"],
+        "age": r["age"], 
+        "experience": r["experience"],
+        "salary": r["predicted_salary"], 
+        "date": r["created_at"]
+    }
+
     low  = max(0, pred["salary"] - 8000)
     high = pred["salary"] + 8000
 
-    # Preview
+    # Preview and Download Logic remains the same...
     st.markdown(f"""
     <div class="result-box" style="text-align:left;max-width:600px;">
         <p class="result-label">Report Preview</p>
@@ -861,11 +880,13 @@ def page_report():
     </div>
     """, unsafe_allow_html=True)
 
+    # ... [Keep the rest of your existing txt_report and download button code here]
+
     st.markdown("<br>", unsafe_allow_html=True)
 
     txt_report = f"""
 ╔══════════════════════════════════════════════════════════════════╗
-║             TECH SALARY PREDICTOR — SALARY REPORT               ║
+║                TECH SALARY PREDICTOR — SALARY REPORT             ║
 ╚══════════════════════════════════════════════════════════════════╝
 
 Generated  : {pred['date']}
@@ -906,7 +927,11 @@ Report for : {pred['username']}
   conditions. Use this estimate as a reference point only.
 
 ══════════════════════════════════════════════════════════════════
-  Tech Salary Predictor · Final Year Project 2025
+  Tech Salary Predictor · Minor Year Project 2026
+  Minor Project – 2026
+  Made by: Zeeshan Anwar
+  Roll No.: 24208013
+  Course: B.Tech Computer Science and Engineering (Lateral Entry – 6th Semester)  
 ══════════════════════════════════════════════════════════════════
 """.strip()
 
@@ -1009,30 +1034,7 @@ def page_about():
         </div>
         """, unsafe_allow_html=True)
 
-    # Pipeline visualisation
-    st.markdown('<p class="section-label">Model Pipeline</p>', unsafe_allow_html=True)
-    steps  = ["Raw Dataset", "Filter Tech Roles", "Encode Features", "Scale Numerics", "Train RF", "Predict Salary"]
-    colors = ["#7b61ff", "#6a7fff", "#5a9fff", "#3ab8ff", "#18ccff", "#00d4ff"]
-    fig = go.Figure()
-    for i, (step, col) in enumerate(zip(steps, colors)):
-        fig.add_trace(go.Scatter(
-            x=[i], y=[0], mode="markers+text",
-            marker=dict(size=52, color=col, line=dict(color="rgba(255,255,255,0.15)", width=2)),
-            text=[f"<b>{i+1}</b>"], textfont=dict(color="white", size=14),
-            textposition="middle center",
-            hovertemplate=f"<b>{step}</b><extra></extra>", showlegend=False,
-        ))
-        fig.add_annotation(x=i, y=-0.22, text=step, showarrow=False,
-                           font=dict(size=9.5, color="rgba(255,255,255,0.45)"))
-        if i < len(steps)-1:
-            fig.add_annotation(x=i+0.5, y=0, text="→", showarrow=False,
-                               font=dict(size=20, color="rgba(255,255,255,0.2)"))
-    fig.update_layout(
-        **PLOTLY_LAYOUT, height=155,
-        xaxis=dict(showgrid=False, showticklabels=False, zeroline=False, range=[-0.5, len(steps)-0.5]),
-        yaxis=dict(showgrid=False, showticklabels=False, zeroline=False, range=[-0.45, 0.3]),
-    )
-    st.plotly_chart(fig, use_container_width=True)
+
 
 
 # ═══════════════════════════════════════════════════════════════
